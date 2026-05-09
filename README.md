@@ -1,6 +1,5 @@
-**😄 Human Facial Expression Recognition Using Deep Learning and Computer Vision Techniques**
-
-# Human Facial Expression Recognition
+# **😄 Human Facial Expression Recognition Using Deep Learning and Computer Vision Techniques**
+---
 
 ## Overview
 
