@@ -197,15 +197,21 @@ def load_model(path: str):
 
 @st.cache_resource
 def get_face_cascade():
-    """Load the Haar Cascade face detector."""
-    cascade_path = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+    """Load OpenCV's optional Haar cascade without blocking inference.
 
-    cascade = cv2.CascadeClassifier(cascade_path)
+    Some cloud OpenCV builds do not ship ``cv2.data.haarcascades``. Face
+    cropping is an enhancement, not a model requirement, so return ``None``
+    and safely analyze the full image when the detector is unavailable.
+    """
+    cv2_data = getattr(cv2, "data", None)
+    cascade_directory = getattr(cv2_data, "haarcascades", None)
+    if not cascade_directory:
+        return None
 
-    if cascade.empty():
-        raise RuntimeError("Failed to load Haar Cascade face detector.")
-
-    return cascade
+    cascade = cv2.CascadeClassifier(
+        f"{cascade_directory}haarcascade_frontalface_default.xml"
+    )
+    return None if cascade.empty() else cascade
 
 
 def detect_and_crop_face(image: Image.Image):
@@ -213,6 +219,8 @@ def detect_and_crop_face(image: Image.Image):
     img_np = np.array(image.convert("RGB"))
     gray = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
     cascade = get_face_cascade()
+    if cascade is None:
+        return image, False
     
     faces = cascade.detectMultiScale(
         gray,
@@ -420,4 +428,3 @@ with results_col:
         with st.expander("View All 9 Emotion Scores"):
             for rank, index in enumerate(ordered_indices[3:], start=4):
                 score_row(rank, CLASS_NAMES[index], probabilities[index] * 100)
-
