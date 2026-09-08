@@ -1,6 +1,6 @@
-streamlit>=1.36
-tensorflow>=2.15
+streamlit
+tensorflow
 numpy
 pandas
 Pillow
-opencv-python-headless>=4.8
+opencv-python-headless

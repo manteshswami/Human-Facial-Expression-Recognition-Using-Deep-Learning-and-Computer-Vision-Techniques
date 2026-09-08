@@ -195,10 +195,17 @@ def load_model(path: str):
     return tf.keras.models.load_model(path, compile=False)
 
 
-@st.cache_resource(show_spinner=False)
+@st.cache_resource
 def get_face_cascade():
+    """Load the Haar Cascade face detector."""
     cascade_path = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
-    return cv2.CascadeClassifier(cascade_path)
+
+    cascade = cv2.CascadeClassifier(cascade_path)
+
+    if cascade.empty():
+        raise RuntimeError("Failed to load Haar Cascade face detector.")
+
+    return cascade
 
 
 def detect_and_crop_face(image: Image.Image):
