@@ -1,46 +1,3 @@
-# **😄 Human Facial Expression Recognition Using Deep Learning and Computer Vision Techniques**
----
-
-## Overview
-
-This project builds a deep learning pipeline for facial expression recognition using computer vision and transfer learning. The model is trained on the Face Emotion Dataset (EMOTIONX-09) and uses ResNet50 as a feature extractor with a custom classification head.
-
-## Dataset
-
-- Dataset: Face Emotion Dataset (EMOTIONX-09) v2
-- Structure:
-    - `train/`
-    - `test/`
-- Classes: multiple facial emotion labels
-- Image size: 96x96 RGB
-
-**Sample Images From Each Class -**
-
-![Sample Images Per Class](https://raw.githubusercontent.com/manteshswami/Human-Facial-Expression-Recognition-Using-Deep-Learning-and-Computer-Vision-Techniques/main/sample%20images%20per%20class.png)
-
-## Key Steps
-
-1. Load and preprocess images from train/test folders
-2. Apply image enhancement:
-     - Gaussian blur
-     - CLAHE
-     - sharpening
-3. Normalize image pixel values
-4. One-hot encode labels
-5. Augment training data using `ImageDataGenerator`
-6. Build and train a ResNet50-based model
-7. Fine-tune the last layers of ResNet50
-8. Evaluate performance using multiple metrics
-
-## Model
-
-- Base model: ResNet50 (ImageNet weights, include_top=False)
-- Custom head:
-    - GlobalAveragePooling2D
-    - Dense(256, activation='relu')
-    - Dropout(0.4)
-    - Dense(num_classes, activation='softmax')
-
 # NeuroExpress — Facial Emotion Recognition
 
 NeuroExpress is a Streamlit web application for classifying facial expressions with a fine-tuned **ResNet50** model. It predicts one of nine emotion classes from a portrait image or a live camera capture, then presents the top result and a ranked confidence breakdown.
@@ -143,3 +100,8 @@ The model file is approximately 217 MB, which exceeds GitHub’s normal 100 MB f
 - Deploy with Docker or another platform that allows the model artifact to be included outside a standard GitHub push.
 
 For Streamlit Community Cloud, keep `app.py`, `requirements.txt`, and `.streamlit/config.toml` in the repository root. Ensure the deployed environment can access `resnet50_model.keras` through one of the approaches above.
+
+## Responsible Use
+
+NeuroExpress is a demonstration and research project. Facial-expression classification is probabilistic and can be affected by lighting, pose, image quality, demographic variation, and dataset limitations. It must not be used for medical, psychological, employment, security, or other high-impact decisions.
+
