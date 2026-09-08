@@ -208,10 +208,13 @@ def get_face_cascade():
     if not cascade_directory:
         return None
 
-    cascade = cv2.CascadeClassifier(
-        f"{cascade_directory}haarcascade_frontalface_default.xml"
-    )
-    return None if cascade.empty() else cascade
+    try:
+        cascade = cv2.CascadeClassifier(
+            f"{cascade_directory}haarcascade_frontalface_default.xml"
+        )
+        return None if cascade.empty() else cascade
+    except (AttributeError, cv2.error):
+        return None
 
 
 def detect_and_crop_face(image: Image.Image):
