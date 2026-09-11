@@ -1,0 +1,26 @@
+ResNet50 + DenseNet121 Soft Voting Ensemble
+
+Models:
+1. ResNet50
+2. DenseNet121
+
+Ensemble Method:
+Soft Voting / Probability Averaging
+
+Model Weights:
+ResNet50: 0.5
+DenseNet121: 0.5
+
+Image Size: 224 x 224
+Number of Classes: 9
+
+Class Names:
+0: Angry
+1: Anxiety
+2: Confusion
+3: Disgust
+4: Fear
+5: Happy
+6: Neutral
+7: Sad
+8: Suprise
