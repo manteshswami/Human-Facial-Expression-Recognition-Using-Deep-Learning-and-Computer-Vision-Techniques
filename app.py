@@ -8,8 +8,21 @@ import tensorflow as tf
 import cv2
 from PIL import Image
 
-MODEL_PATH = "ResNet50_emotion_model.keras"
+MODEL_PATH = "models/resnet50_finetuned.keras"
 IMG_SIZE = (96, 96)
+
+
+_original_dense_from_config = tf.keras.layers.Dense.from_config
+
+
+@classmethod
+def _dense_from_config_without_quantization(cls, config):
+    config = dict(config)
+    config.pop("quantization_config", None)
+    return _original_dense_from_config(config)
+
+
+tf.keras.layers.Dense.from_config = _dense_from_config_without_quantization
 
 # Alphabetical class order from training dataset
 CLASS_NAMES = ["Angry", "Anxiety", "Confusion", "Disgust", "Fear", "Happy", "Neutral", "Sad", "Suprise"]
