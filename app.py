@@ -8,7 +8,11 @@ import tensorflow as tf
 import cv2
 from PIL import Image
 
-MODEL_PATH = "models/resnet50_finetuned.keras"
+MODEL_PATHS = (
+    "models/resnet50_finetuned.keras",
+    "models/densenet121_finetuned.keras",
+)
+MODEL_WEIGHTS = np.array([0.5, 0.5], dtype="float32")
 IMG_SIZE = (96, 96)
 
 
@@ -208,6 +212,11 @@ def load_model(path: str):
     return tf.keras.models.load_model(path, compile=False)
 
 
+@st.cache_resource(show_spinner=False)
+def load_ensemble(paths: tuple[str, ...]):
+    return tuple(load_model(path) for path in paths)
+
+
 @st.cache_resource
 def get_face_cascade():
     """Load OpenCV's optional Haar cascade without blocking inference.
@@ -282,7 +291,7 @@ def preprocess_image(image: Image.Image) -> np.ndarray:
     return np.expand_dims(sharpened.astype("float32") / 255.0, axis=0)
 
 
-def predict(model, image: Image.Image, auto_crop: bool = True):
+def predict(models, image: Image.Image, auto_crop: bool = True):
     started = time.perf_counter()
     face_detected = False
     
@@ -291,7 +300,11 @@ def predict(model, image: Image.Image, auto_crop: bool = True):
     else:
         processed_img = image
         
-    probabilities = model.predict(preprocess_image(processed_img), verbose=0)[0]
+    processed_batch = preprocess_image(processed_img)
+    model_probabilities = np.stack(
+        [model.predict(processed_batch, verbose=0)[0] for model in models]
+    )
+    probabilities = np.average(model_probabilities, axis=0, weights=MODEL_WEIGHTS)
     latency = (time.perf_counter() - started) * 1000
     return probabilities, np.argsort(probabilities)[::-1], latency, face_detected, processed_img
 
@@ -331,12 +344,12 @@ st.markdown('''
 </div>
 ''', unsafe_allow_html=True)
 
-# --- MODEL LOADING ---
+# Model Loading
 try:
-    with st.spinner("Initializing ResNet50 Emotion Engine…"):
-        model = load_model(MODEL_PATH)
+    with st.spinner("Initializing ResNet50 + DenseNet121 Ensemble…"):
+        models = load_ensemble(MODEL_PATHS)
 except Exception as error:
-    st.error(f"Failed to load `{MODEL_PATH}`. Ensure model file exists.")
+    st.error("Failed to load the ensemble models. Ensure both model files exist.")
     with st.expander("Error details"):
         st.code(str(error))
     st.stop()
@@ -404,7 +417,7 @@ with results_col:
         </div>
         ''', unsafe_allow_html=True)
     else:
-        probabilities, ordered_indices, latency_ms, face_detected, cropped_img = predict(model, image, auto_crop=auto_crop)
+        probabilities, ordered_indices, latency_ms, face_detected, cropped_img = predict(models, image, auto_crop=auto_crop)
         
         top_index = ordered_indices[0]
         top_label = CLASS_NAMES[top_index]
