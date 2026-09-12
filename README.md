@@ -492,7 +492,7 @@ Built with ❤️ using:
 
 ## 🌐 Support
 
-- 🐛 **Issues**: [GitHub Issues](https://github.com/yourusername/NeuroExpress/issues)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/manteshswami/Human-Facial-Expression-Recognition-Using-Deep-Learning-and-Computer-Vision-Techniques/issues)
 - 🌐 **Live Demo**: [NeuroExpress Application](https://neuroexpression.streamlit.app/)
 
 ---
@@ -505,6 +505,6 @@ Built with ❤️ using:
 
 Made with ❤️ by Swami Mantesh
 
-[⭐ Star the repository](https://github.com/yourusername/NeuroExpress) if you found this project useful!
+⭐ Star the repository if you found this project useful!
 
 </div>
