@@ -2,17 +2,19 @@
 
 import io
 import time
+from pathlib import Path
+
 import numpy as np
 import streamlit as st
 import tensorflow as tf
 import cv2
 from PIL import Image
 
-MODEL_PATHS = (
-    "models/resnet50_finetuned.keras",
-    "models/densenet121_finetuned.keras",
-)
-MODEL_WEIGHTS = np.array([0.5, 0.5], dtype="float32")
+APP_ROOT = Path(__file__).resolve().parent
+# DenseNet is the required production model. ResNet may participate only when
+# it loads successfully; the app never serves a ResNet-only prediction.
+RESNET_MODEL_PATH = APP_ROOT / "models" / "resnet50_finetuned.keras"
+DENSENET_MODEL_PATH = APP_ROOT / "models" / "densenet121_finetuned.keras"
 IMG_SIZE = (96, 96)
 
 
@@ -208,13 +210,47 @@ div[data-testid="stButton"] > button:hover {
 
 
 @st.cache_resource(show_spinner=False)
-def load_model(path: str):
-    return tf.keras.models.load_model(path, compile=False)
+def load_inference_models(resnet_path: str, densenet_path: str):
+    """Load the ensemble, or clearly fall back to the stronger DenseNet only.
 
+    Paths are absolute so Streamlit Cloud's working directory cannot change
+    model selection. DenseNet is mandatory. ResNet is optional and can never
+    become a single-model fallback.
+    """
+    def load_and_validate(path: str):
+        if not Path(path).is_file():
+            raise FileNotFoundError(f"Required model is missing: {Path(path).name}")
+        try:
+            model = tf.keras.models.load_model(path, compile=False)
+        except Exception as error:
+            raise RuntimeError(f"Could not load {Path(path).name}") from error
 
-@st.cache_resource(show_spinner=False)
-def load_ensemble(paths: tuple[str, ...]):
-    return tuple(load_model(path) for path in paths)
+        input_shape = tuple(model.input_shape)
+        output_shape = tuple(model.output_shape)
+        if input_shape[1:] != (*IMG_SIZE, 3):
+            raise RuntimeError(
+                f"{Path(path).name} has unexpected input shape {input_shape}; "
+                f"expected (None, {IMG_SIZE[0]}, {IMG_SIZE[1]}, 3)."
+            )
+        if output_shape[-1] != len(CLASS_NAMES):
+            raise RuntimeError(
+                f"{Path(path).name} has {output_shape[-1]} outputs; "
+                f"expected {len(CLASS_NAMES)} emotion classes."
+            )
+        return model
+
+    densenet = load_and_validate(densenet_path)
+    try:
+        resnet = load_and_validate(resnet_path)
+    except Exception as error:
+        return (densenet,), np.array([1.0], dtype="float32"), "DenseNet121 only", str(error)
+
+    return (
+        (resnet, densenet),
+        np.array([0.5, 0.5], dtype="float32"),
+        "ResNet50 + DenseNet121 ensemble",
+        None,
+    )
 
 
 @st.cache_resource
@@ -291,7 +327,9 @@ def preprocess_image(image: Image.Image) -> np.ndarray:
     return np.expand_dims(sharpened.astype("float32") / 255.0, axis=0)
 
 
-def predict(models, image: Image.Image, auto_crop: bool = True):
+def predict(models, model_weights: np.ndarray, image: Image.Image, auto_crop: bool = True):
+    if len(models) != len(model_weights):
+        raise RuntimeError("Ensemble is incomplete; prediction was blocked.")
     started = time.perf_counter()
     face_detected = False
     
@@ -304,7 +342,11 @@ def predict(models, image: Image.Image, auto_crop: bool = True):
     model_probabilities = np.stack(
         [model.predict(processed_batch, verbose=0)[0] for model in models]
     )
-    probabilities = np.average(model_probabilities, axis=0, weights=MODEL_WEIGHTS)
+    if model_probabilities.shape != (len(model_weights), len(CLASS_NAMES)):
+        raise RuntimeError(
+            "Model output is invalid; every active model must return nine class probabilities."
+        )
+    probabilities = np.average(model_probabilities, axis=0, weights=model_weights)
     latency = (time.perf_counter() - started) * 1000
     return probabilities, np.argsort(probabilities)[::-1], latency, face_detected, processed_img
 
@@ -347,12 +389,19 @@ st.markdown('''
 # Model Loading
 try:
     with st.spinner("Initializing ResNet50 + DenseNet121 Ensemble…"):
-        models = load_ensemble(MODEL_PATHS)
+        models, model_weights, model_mode, resnet_load_error = load_inference_models(
+            str(RESNET_MODEL_PATH), str(DENSENET_MODEL_PATH)
+        )
 except Exception as error:
-    st.error("Failed to load the ensemble models. Ensure both model files exist.")
+    st.error("DenseNet121 is unavailable, so facial-expression predictions are disabled.")
     with st.expander("Error details"):
         st.code(str(error))
     st.stop()
+
+if resnet_load_error:
+    st.warning("ResNet50 is unavailable. Predictions are explicitly running on DenseNet121 only.")
+    with st.expander("ResNet load details"):
+        st.code(resnet_load_error)
 
 # --- MAIN COMPACT 2-COLUMN VIEWPORT ---
 upload_col, results_col = st.columns([0.48, 0.52], gap="large")
@@ -417,7 +466,9 @@ with results_col:
         </div>
         ''', unsafe_allow_html=True)
     else:
-        probabilities, ordered_indices, latency_ms, face_detected, cropped_img = predict(models, image, auto_crop=auto_crop)
+        probabilities, ordered_indices, latency_ms, face_detected, cropped_img = predict(
+            models, model_weights, image, auto_crop=auto_crop
+        )
         
         top_index = ordered_indices[0]
         top_label = CLASS_NAMES[top_index]

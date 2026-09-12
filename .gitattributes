@@ -1,1 +1,4 @@
-models/*.keras filter=lfs diff=lfs merge=lfs -text
+# Keep the production ensemble artifacts in Git LFS.  Without this, GitHub's
+# normal 100 MB file limit can leave Streamlit Cloud with only one model.
+models/resnet50_finetuned.keras filter=lfs diff=lfs merge=lfs -text
+models/densenet121_finetuned.keras filter=lfs diff=lfs merge=lfs -text

@@ -206,6 +206,27 @@ The two model files total approximately **309 MB**, which exceeds GitHub's stand
 
 For Streamlit Community Cloud, keep `app.py`, `requirements.txt`, and `.streamlit/config.toml` in the repository. Ensure the deployed environment can access the `models/` directory through one of the approaches above.
 
+### Required production model setup
+
+When both artifacts are available, every result is the equal-weight ResNet50 +
+DenseNet121 ensemble. DenseNet121 is the required fallback: if ResNet50 is
+missing or invalid, the interface clearly reports that it is using DenseNet121
+only. It never serves a ResNet50-only prediction. This repository includes Git
+LFS rules for both artifacts; from this project directory, before committing
+or pushing, run:
+
+```bash
+git lfs install
+git add .gitattributes models/resnet50_finetuned.keras models/densenet121_finetuned.keras
+git commit -m "Store ensemble models with Git LFS"
+git push
+```
+
+In Streamlit Community Cloud, set the app's entry point to `app.py` in this
+project directory. At startup the app resolves model paths relative to
+`app.py` and validates models' input/output shapes. It stops with an error
+when DenseNet121 is missing or invalid.
+
 ---
 
 ## Responsible Use
