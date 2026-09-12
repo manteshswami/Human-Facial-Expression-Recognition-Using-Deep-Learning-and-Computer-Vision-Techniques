@@ -227,6 +227,12 @@ project directory. At startup the app resolves model paths relative to
 `app.py` and validates models' input/output shapes. It stops with an error
 when DenseNet121 is missing or invalid.
 
+The checked-in `requirements.txt` pins the locally verified inference stack:
+Python 3.10, TensorFlow 2.16.1, Keras 3.12.1, NumPy 1.26.4, and OpenCV 4.11.0.
+In Streamlit Community Cloud, select Python 3.10 in **Advanced settings** when
+deploying. A dependency-file change triggers a full dependency reinstall, and
+the interface shows the active model mode for each production session.
+
 ---
 
 ## Responsible Use

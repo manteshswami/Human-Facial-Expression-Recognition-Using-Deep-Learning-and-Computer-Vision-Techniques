@@ -1,6 +1,10 @@
-streamlit
-tensorflow
-numpy
-pandas
-Pillow
-opencv-python-headless
+# Pinned to the locally verified inference environment. Do not leave these
+# unpinned: a new TensorFlow/Keras/OpenCV release can change model loading or
+# image preprocessing in production.
+streamlit==1.57.0
+tensorflow==2.16.1
+keras==3.12.1
+numpy==1.26.4
+pandas==2.2.2
+Pillow==10.4.0
+opencv-python-headless==4.11.0.86

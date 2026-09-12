@@ -449,6 +449,7 @@ with upload_col:
 
 with results_col:
     st.markdown('<p class="section-kicker">Real-time Inference</p><h2 class="section-title">Emotion Prediction</h2>', unsafe_allow_html=True)
+    st.caption(f"Active model: {model_mode}")
     
     if image is None:
         st.markdown('''
