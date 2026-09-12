@@ -1,7 +1,6 @@
-<div align="center">
-  
 # 🧠 NeuroExpress — Advanced Facial Emotion Recognition
 
+<div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.16.1-orange?style=for-the-badge&logo=tensorflow)
@@ -39,6 +38,14 @@ Built for researchers, practitioners, and developers, NeuroExpress provides:
 - **Live Camera**: Direct browser-based real-time capture
 - **Automatic Face Crop**: OpenCV Haar Cascade detection for optimal ROI isolation
 - **Flexible Processing**: Optional auto-crop with fallback to full-image analysis
+
+#### 📷 Live Camera Instructions
+For best emotion detection results using the live camera:
+- **Position**: Hold camera 12-18 inches (30-45 cm) from your face
+- **Framing**: Ensure your face fills most of the frame—forehead to chin should be visible
+- **Lighting**: Use natural or bright indoor lighting; avoid shadows across your face
+- **Clarity**: Keep the camera lens clean and the image sharp
+- **Expression**: Hold your expression steady for 1-2 seconds before capture
 
 ### 🧠 Advanced Ensemble Inference
 - **Dual Model Architecture**: Combines ResNet50 (94.16% accuracy) and DenseNet121 (98.57% accuracy)
