@@ -1,6 +1,7 @@
+<div align="center">
+
 # 🧠 NeuroExpress — Advanced Facial Emotion Recognition
 
-<div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.16.1-orange?style=for-the-badge&logo=tensorflow)
@@ -12,7 +13,7 @@
 
 **A state-of-the-art deep learning system for real-time facial expression analysis powered by an intelligent ResNet50 + DenseNet121 soft-voting ensemble**
 
-[🚀 Live Application](https://neuroexpression.streamlit.app/) • [📖 Documentation](#documentation) • [🤝 Contributing](#contributing)
+[🚀 Live Application](https://neuroexpression.streamlit.app/) • [📖 Documentation](#-documentation) • [🤝 Contributing](#-contributing)
 
 </div>
 
