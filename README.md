@@ -24,11 +24,11 @@
 NeuroExpress is a production-grade Streamlit web application that leverages cutting-edge deep learning to classify facial expressions with exceptional accuracy. The system combines two fine-tuned ImageNet models (ResNet50 and DenseNet121) through intelligent soft-voting ensemble methodology, delivering **98.46% accuracy** on a diverse test dataset of 976 samples across 9 distinct emotion classes.
 
 Built for researchers, practitioners, and developers, NeuroExpress provides:
-- ✅ **Real-time emotion detection** from uploaded images or live camera feeds
-- ✅ **Robust face detection** with automatic crop and preprocessing
-- ✅ **Probabilistic confidence scores** for informed decision-making
-- ✅ **Mobile-responsive interface** with dark-theme optimization
-- ✅ **Production-ready architecture** with fallback mechanisms
+- **Real-time emotion detection** from uploaded images or live camera feeds
+- **Robust face detection** with automatic crop and preprocessing
+- **Probabilistic confidence scores** for informed decision-making
+- **Mobile-responsive interface** with dark-theme optimization
+- **Production-ready architecture** with fallback mechanisms
 
 ---
 
@@ -75,17 +75,15 @@ The model recognizes nine distinct emotional states, each with a dedicated confi
 
 | Index | Emotion | Emoji | Characteristics |
 | :---: | --- | :---: | --- |
-| 0 | 😠 **Angry** | 😠 | High activation, negative valence |
-| 1 | 😰 **Anxiety** | 😰 | Apprehension, worry, concern |
-| 2 | 😕 **Confusion** | 😕 | Uncertainty, puzzlement, bewilderment |
-| 3 | 🤢 **Disgust** | 🤢 | Revulsion, contempt, disapproval |
-| 4 | 😨 **Fear** | 😨 | Alarm, dread, apprehension |
-| 5 | 😄 **Happy** | 😄 | Joy, contentment, satisfaction |
-| 6 | 😐 **Neutral** | 😐 | No strong emotional expression |
-| 7 | 😢 **Sad** | 😢 | Sorrow, melancholy, unhappiness |
-| 8 | 😲 **Surprise** | 😲 | Astonishment, wonder, unexpectedness |
-
-> **📌 Note**: The internal model class is labeled `Suprise` (legacy from training dataset) but displays as standard `Surprise` in the UI for professional presentation.
+| 0 | **Angry** | 😠 | High activation, negative valence |
+| 1 | **Anxiety** | 😰 | Apprehension, worry, concern |
+| 2 | **Confusion** | 😕 | Uncertainty, puzzlement, bewilderment |
+| 3 | **Disgust** | 🤢 | Revulsion, contempt, disapproval |
+| 4 | **Fear** | 😨 | Alarm, dread, apprehension |
+| 5 | **Happy** | 😄 | Joy, contentment, satisfaction |
+| 6 | **Neutral** | 😐 | No strong emotional expression |
+| 7 | **Sad** | 😢 | Sorrow, melancholy, unhappiness |
+| 8 | **Surprise** | 😲 | Astonishment, wonder, unexpectedness |
 
 ---
 
@@ -114,14 +112,14 @@ The model recognizes nine distinct emotional states, each with a dedicated confi
                        │
                        ▼
       ┌────────────────────────────────────┐
-      │   ADAPTIVE PREPROCESSING STACK      │
+      │   ADAPTIVE PREPROCESSING STACK     │
       │  ┌──────────────────────────────┐  │
       │  │ 1. Resize: 96×96 RGB         │  │
       │  │    (Bilinear interpolation)  │  │
       │  └──────────────────────────────┘  │
       │  ┌──────────────────────────────┐  │
       │  │ 2. Gaussian Blur             │  │
-      │  │    (σ=1.0, kernel=3×3)      │  │
+      │  │    (σ=1.0, kernel=3×3)       │  │
       │  │    → Noise suppression       │  │
       │  └──────────────────────────────┘  │
       │  ┌──────────────────────────────┐  │
@@ -160,7 +158,7 @@ The model recognizes nine distinct emotional states, each with a dedicated confi
     │ Output:     │      │ Output:      │
     │ 9-class     │      │ 9-class      │
     │ softmax     │      │ softmax      │
-    │ P_r ∈ℝ⁹    │      │ P_d ∈ℝ⁹     │
+    │ P_r ∈ℝ⁹     │      │ P_d ∈ℝ⁹     │
     │ Acc: 94.16% │      │ Acc: 98.57%  │
     └──────┬──────┘      └──────┬───────┘
            │                    │
@@ -390,19 +388,6 @@ git lfs ls-files
    ```
 5. **Validation**: App validates models at startup and reports status
 
-### Production Checklist
-
-- ✅ Git LFS properly configured in local repo and GitHub
-- ✅ `.gitattributes` file committed with LFS rules
-- ✅ Both model files tracked and pushed to remote
-- ✅ DenseNet121 model is **required** (validation at startup)
-- ✅ ResNet50 optional; missing triggers automatic fallback mode
-- ✅ Model paths resolved relative to `app.py` directory
-- ✅ Input/output shape validation on app launch
-- ✅ UI displays active inference mode (ensemble vs. fallback)
-- ✅ Dependencies pinned to exact versions in `requirements.txt`
-- ✅ `config.toml` configured for production dark theme
-
 ---
 
 ## 📚 Documentation
@@ -505,9 +490,8 @@ Built with ❤️ using:
 
 ---
 
-## 📞 Support & Contact
+## 🌐 Support
 
-- 📧 **Email**: swamimantesh215@gmail.com
 - 🐛 **Issues**: [GitHub Issues](https://github.com/yourusername/NeuroExpress/issues)
 - 🌐 **Live Demo**: [NeuroExpress Application](https://neuroexpression.streamlit.app/)
 
